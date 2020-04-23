@@ -1,0 +1,20 @@
+PayrexxIntegrationService:
+  Db:
+    LogsConnString:
+      settings-key: PayrexxIntegrationService-LogsConnString
+      types:
+        - AzureTableStorage
+    SqlDbConnString:
+      settings-key: PayrexxIntegrationService-SqlDbConnString
+SlackNotifications:
+    AzureQueue:
+        ConnectionString:
+            settings-key: SlackNotificationsConnString
+            types:
+                - AzureTableStorage
+        QueueName:
+            settings-key: SlackQueueName
+MonitoringServiceClient:
+    MonitoringServiceUrl:
+        settings-key: MonitoringServiceUrl
+
