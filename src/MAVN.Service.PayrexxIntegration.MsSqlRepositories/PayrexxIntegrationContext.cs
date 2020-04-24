@@ -7,7 +7,7 @@ namespace MAVN.Service.PayrexxIntegration.MsSqlRepositories
 {
     public class PayrexxIntegrationContext : MsSqlContext
     {
-        private const string Schema = ""; // TODO put proper schema name here
+        private const string Schema = "payrexx";
 
         // empty constructor needed for EF migrations
         [UsedImplicitly]

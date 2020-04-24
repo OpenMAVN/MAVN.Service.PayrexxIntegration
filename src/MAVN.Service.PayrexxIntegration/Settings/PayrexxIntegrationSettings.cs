@@ -7,5 +7,7 @@ namespace MAVN.Service.PayrexxIntegration.Settings
     public class PayrexxIntegrationSettings
     {
         public DbSettings Db { get; set; }
+
+        public string PayrexxApiBaseUrl { get; set; }
     }
 }

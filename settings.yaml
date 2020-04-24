@@ -6,6 +6,8 @@ PayrexxIntegrationService:
         - AzureTableStorage
     SqlDbConnString:
       settings-key: PayrexxIntegrationService-SqlDbConnString
+  PayrexxApiBaseUrl:
+    settings-key: PayrexxIntegrationService-PayrexxApiBaseUrl
 SlackNotifications:
     AzureQueue:
         ConnectionString:
