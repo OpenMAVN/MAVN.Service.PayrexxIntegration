@@ -6,10 +6,8 @@ namespace MAVN.Service.PayrexxIntegration.Client
     /// <summary>
     /// PayrexxIntegration API aggregating interface.
     /// </summary>
-    public class PayrexxIntegrationClient : IPayrexxIntegrationClient
+    public class PayrexxIntegrationClient
     {
-        // Note: Add similar Api properties for each new service controller
-
         /// <summary>Inerface to PayrexxIntegration Api.</summary>
         public IPayrexxIntegrationApi Api { get; private set; }
 

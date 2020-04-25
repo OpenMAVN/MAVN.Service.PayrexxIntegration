@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using MAVN.Service.PayrexxIntegration;
-using MAVN.Service.PayrexxIntegration.Client;
+using MAVN.Service.PaymentIntegrationPlugin.Client;
 using Microsoft.AspNetCore.Mvc;
 using Refit;
 using Xunit;
@@ -25,7 +24,7 @@ namespace MAVN.Service.PayrexxIntegration.Tests
         [Fact]
         public void CheckRoutesInControllersTest()
         {
-            var clientInterface = typeof(IPayrexxIntegrationClient);
+            var clientInterface = typeof(IPaymentIntegrationPluginApi);
 
             var apiInterfaces = clientInterface
                 .GetProperties()

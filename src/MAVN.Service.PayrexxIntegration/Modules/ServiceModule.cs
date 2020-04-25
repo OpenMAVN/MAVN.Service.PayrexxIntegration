@@ -3,6 +3,8 @@ using JetBrains.Annotations;
 using Lykke.Sdk;
 using Lykke.Sdk.Health;
 using Lykke.SettingsReader;
+using MAVN.Service.PayrexxIntegration.Domain.Services;
+using MAVN.Service.PayrexxIntegration.DomainServices;
 using MAVN.Service.PayrexxIntegration.Services;
 using MAVN.Service.PayrexxIntegration.Settings;
 
@@ -11,11 +13,11 @@ namespace MAVN.Service.PayrexxIntegration.Modules
     [UsedImplicitly]
     public class ServiceModule : Module
     {
-        private readonly IReloadingManager<AppSettings> _appSettings;
+        private readonly PayrexxIntegrationSettings _settings;
 
         public ServiceModule(IReloadingManager<AppSettings> appSettings)
         {
-            _appSettings = appSettings;
+            _settings = appSettings.CurrentValue.PayrexxIntegrationService;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -35,7 +37,10 @@ namespace MAVN.Service.PayrexxIntegration.Modules
                 .AutoActivate()
                 .SingleInstance();
 
-            // TODO: Add your dependencies here
+            builder.RegisterType<PartnerIntegrationPropertiesFetcherService>()
+                .As<IPartnerIntegrationPropertiesFetcherService>()
+                .WithParameter(TypedParameter.From(_settings.PayrexxApiBaseUrl))
+                .SingleInstance();
         }
     }
 }

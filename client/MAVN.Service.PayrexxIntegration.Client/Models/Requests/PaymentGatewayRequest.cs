@@ -27,6 +27,10 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
         [JsonProperty("purpose")]
         public string Purpose { get; set; }
 
+        [JsonProperty("referenceId")]
+        [Required]
+        public string ReferenceId { get; set; }
+
         [JsonProperty("successRedirectUrl")]
         public string SuccessRedirectUrl
         {

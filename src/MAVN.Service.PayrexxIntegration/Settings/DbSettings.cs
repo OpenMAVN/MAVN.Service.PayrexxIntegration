@@ -6,8 +6,5 @@ namespace MAVN.Service.PayrexxIntegration.Settings
     {
         [AzureTableCheck]
         public string LogsConnString { get; set; }
-
-        [SqlCheck]
-        public string SqlDbConnString { get; set; }
     }
 }

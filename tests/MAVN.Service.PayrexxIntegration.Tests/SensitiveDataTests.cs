@@ -20,7 +20,7 @@ namespace MAVN.Service.PayrexxIntegration.Tests
         [Fact]
         public void CheckSensitiveParamsTest()
         {
-            var clientInterface = typeof(IPayrexxIntegrationClient);
+            var clientInterface = typeof(PayrexxIntegrationClient);
 
             var apiInterfaces = clientInterface
                 .GetProperties()
