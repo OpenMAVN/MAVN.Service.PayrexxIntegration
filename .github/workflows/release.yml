@@ -6,7 +6,7 @@ on:
       - published
 
 env:
-  RELEASE_CLIENT: true
+  RELEASE_CLIENT: false
   RELEASE_CONTRACT: false
   RELEASE_JOB: false
   RELEASE_SERVICE: true
