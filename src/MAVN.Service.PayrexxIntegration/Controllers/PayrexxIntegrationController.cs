@@ -8,8 +8,8 @@ using MAVN.Service.PayrexxIntegration.Client.Models.Requests;
 using MAVN.Service.PaymentIntegrationPlugin.Client;
 using MAVN.Service.PaymentIntegrationPlugin.Client.Models.Responses;
 using MAVN.Service.PaymentIntegrationPlugin.Client.Models.Requests;
-using Microsoft.AspNetCore.Mvc;
 using MAVN.Service.PayrexxIntegration.Domain.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MAVN.Service.PayrexxIntegration.Controllers
 {
@@ -31,10 +31,10 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// Get a list of payment integration properties
         /// </summary>
         [HttpGet("requirements")]
-        public Task<PaymentIntegrationResponse> GetPaymentIntegrationPropertiesAsync()
+        public Task<PaymentIntegrationPropertiesResponse> GetPaymentIntegrationPropertiesAsync()
         {
             return Task.FromResult(
-                new PaymentIntegrationResponse
+                new PaymentIntegrationPropertiesResponse
                 {
                     Properties = new List<PaymentIntegrationProperty>
                     {

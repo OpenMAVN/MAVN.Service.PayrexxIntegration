@@ -18,7 +18,7 @@ namespace MAVN.Service.PayrexxIntegration.DomainServices
         {
             throw new NotSupportedException();
 
-            //var partnerIntegrationProperties = await _partnerManagementServiceClient.
+            //var partnerIntegrationProperties = await 
 
             //return new PartnerIntegrationProperties
             //{
