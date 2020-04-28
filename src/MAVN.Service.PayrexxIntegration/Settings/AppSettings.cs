@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Lykke.Sdk.Settings;
+using MAVN.Service.CustomerProfile.Client;
 
 namespace MAVN.Service.PayrexxIntegration.Settings
 {
@@ -7,5 +8,7 @@ namespace MAVN.Service.PayrexxIntegration.Settings
     public class AppSettings : BaseAppSettings
     {
         public PayrexxIntegrationSettings PayrexxIntegrationService { get; set; }
+
+        public CustomerProfileServiceClientSettings CustomerProfileServiceClient { get; set; }
     }
 }

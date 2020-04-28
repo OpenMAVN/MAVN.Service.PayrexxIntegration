@@ -1,6 +1,6 @@
 ﻿namespace MAVN.Service.PayrexxIntegration.Domain
 {
-    public class PartnerIntegrationProperties
+    public class PayrexxIntegrationProperties
     {
         public string ApiBaseUrl { get; set; }
 

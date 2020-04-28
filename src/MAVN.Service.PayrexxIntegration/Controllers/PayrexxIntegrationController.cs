@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Common.Log;
 using Lykke.Common.Log;
 using MAVN.Service.PayrexxIntegration.Client;
@@ -10,20 +11,24 @@ using MAVN.Service.PaymentIntegrationPlugin.Client.Models.Responses;
 using MAVN.Service.PaymentIntegrationPlugin.Client.Models.Requests;
 using MAVN.Service.PayrexxIntegration.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
+using MAVN.Service.PayrexxIntegration.Domain;
 
 namespace MAVN.Service.PayrexxIntegration.Controllers
 {
     [Route("api/payment")]
     public class PayrexxIntegrationController : Controller, IPaymentIntegrationPluginApi
     {
-        private readonly IPartnerIntegrationPropertiesFetcherService _partnerIntegrationPropertiesFetcherService;
+        private readonly IPartnerIntegrationPropertiesService _partnerIntegrationPropertiesFetcherService;
+        private readonly IMapper _mapper;
         private readonly ILog _log;
 
         public PayrexxIntegrationController(
-            IPartnerIntegrationPropertiesFetcherService partnerIntegrationPropertiesFetcherService,
+            IPartnerIntegrationPropertiesService partnerIntegrationPropertiesFetcherService,
+            IMapper mapper,
             ILogFactory logFactory)
         {
             _partnerIntegrationPropertiesFetcherService = partnerIntegrationPropertiesFetcherService;
+            _mapper = mapper;
             _log = logFactory.CreateLog(this);
         }
 
@@ -33,23 +38,13 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         [HttpGet("requirements")]
         public Task<PaymentIntegrationPropertiesResponse> GetPaymentIntegrationPropertiesAsync()
         {
+            var properties = _partnerIntegrationPropertiesFetcherService.GetIntegrationProperties();
+
             return Task.FromResult(
                 new PaymentIntegrationPropertiesResponse
                 {
-                    Properties = new List<PaymentIntegrationProperty>
-                    {
-                        new PaymentIntegrationProperty
-                        {
-                            Name = "Instance name",
-                            Description = "Payrexx instance name",
-                        },
-                        new PaymentIntegrationProperty
-                        {
-                            Name = "API Secret",
-                            Description = "Payrexx api key",
-                            IsSecret = true,
-                        },
-                    }
+                    PaymentProvider = Constants.PayrexxProvider,
+                    Properties = _mapper.Map<List<PaymentIntegrationProperty>>(properties),
                 });
         }
 

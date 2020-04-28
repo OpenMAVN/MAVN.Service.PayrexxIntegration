@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="MAVN.Service.CustomerProfile.Client" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MAVN.Service.PayrexxIntegration.Domain\MAVN.Service.PayrexxIntegration.Domain.csproj" />

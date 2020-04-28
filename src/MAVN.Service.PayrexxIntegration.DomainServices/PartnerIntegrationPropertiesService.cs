@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MAVN.Service.CustomerProfile.Client;
+using MAVN.Service.PayrexxIntegration.Domain;
+using MAVN.Service.PayrexxIntegration.Domain.Services;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace MAVN.Service.PayrexxIntegration.DomainServices
+{
+    public class PartnerIntegrationPropertiesService : IPartnerIntegrationPropertiesService
+    {
+        private readonly ICustomerProfileClient _customerProfileClient;
+        private readonly string _apiBaseUrl;
+
+        public PartnerIntegrationPropertiesService(
+            ICustomerProfileClient customerProfileClient,
+            string apiBaseUrl)
+        {
+            _customerProfileClient = customerProfileClient;
+            _apiBaseUrl = apiBaseUrl;
+        }
+
+        public List<IntegrationProperty> GetIntegrationProperties()
+        {
+            return new List<IntegrationProperty>
+            {
+                new IntegrationProperty
+                {
+                    Name = "Instance name",
+                    Description = "Payrexx instance name",
+                    JsonKey = Constants.InstanceJsonProperty,
+                },
+                new IntegrationProperty
+                {
+                    Name = "API Secret",
+                    Description = "Payrexx api key",
+                    JsonKey = Constants.ApiKeyJsonProperty,
+                    IsSecret = true,
+                },
+            };
+        }
+
+        public async Task<PayrexxIntegrationProperties> FetchPropertiesAsync(Guid partnerId)
+        {
+            var partnerIntegrationProperties = await _customerProfileClient.PaymentProviderDetails.GetByPartnerIdAndPaymentProviderAsync(
+                partnerId, Constants.PayrexxProvider);
+
+            var jobj = (JObject)JsonConvert.DeserializeObject(partnerIntegrationProperties.PaymentProviderDetails.PaymentIntegrationProperties);
+
+            return new PayrexxIntegrationProperties
+            {
+                ApiBaseUrl = _apiBaseUrl,
+                InstanceName = jobj[Constants.InstanceJsonProperty].ToString(),
+                ApiKey = jobj[Constants.ApiKeyJsonProperty].ToString(),
+            };
+        }
+    }
+}
