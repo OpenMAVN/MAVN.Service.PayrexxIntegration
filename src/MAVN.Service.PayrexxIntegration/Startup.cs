@@ -14,6 +14,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MAVN.Service.PaymentIntegrationPlugin.Client;
 
 namespace MAVN.Service.PayrexxIntegration
 {
@@ -52,6 +53,11 @@ namespace MAVN.Service.PayrexxIntegration
                         });
                     };
                     */
+                };
+
+                options.ConfigureFluentValidation = v =>
+                {
+                    v.RegisterValidatorsFromAssemblyContaining<IPaymentIntegrationPluginApi>();
                 };
 
                 options.Extend = (sc, settings) =>

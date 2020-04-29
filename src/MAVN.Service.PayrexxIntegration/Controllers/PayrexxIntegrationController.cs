@@ -12,6 +12,8 @@ using MAVN.Service.PaymentIntegrationPlugin.Client.Models.Requests;
 using MAVN.Service.PayrexxIntegration.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using MAVN.Service.PayrexxIntegration.Domain;
+using System.Net;
+using MAVN.Service.PayrexxIntegration.Domain.Enums;
 
 namespace MAVN.Service.PayrexxIntegration.Controllers
 {
@@ -36,6 +38,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// Get a list of payment integration properties
         /// </summary>
         [HttpGet("requirements")]
+        [ProducesResponseType(typeof(PaymentIntegrationPropertiesResponse), (int)HttpStatusCode.OK)]
         public Task<PaymentIntegrationPropertiesResponse> GetPaymentIntegrationPropertiesAsync()
         {
             var properties = _partnerIntegrationPropertiesFetcherService.GetIntegrationProperties();
@@ -52,6 +55,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// Get a list of supported currencies
         /// </summary>
         [HttpGet("currencies")]
+        [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
         public Task<List<string>> GetPaymentIntegrationSupportedCurrenciesAsync()
         {
             return Task.FromResult(new List<string> { "CHF" });
@@ -62,9 +66,12 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// </summary>
         /// <param name="request">Check payment integration request</param>
         [HttpPost("check")]
-        public async Task<bool> CheckPaymentIntegrationAsync(CheckPaymentIntegrationRequest request)
+        [ProducesResponseType(typeof(CheckIntegrationErrorCode), (int)HttpStatusCode.OK)]
+        public async Task<CheckIntegrationErrorCode> CheckPaymentIntegrationAsync(CheckPaymentIntegrationRequest request)
         {
             var integrationProperties = await _partnerIntegrationPropertiesFetcherService.FetchPropertiesAsync(request.PartnerId);
+            if (integrationProperties.ErrorCode != IntegrationPropertiesErrorCode.None)
+                return _mapper.Map<CheckIntegrationErrorCode>(integrationProperties.ErrorCode);
 
             var client = new PayrexxIntegrationClient(
                 integrationProperties.ApiBaseUrl,
@@ -74,12 +81,14 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
             try
             {
                 var res = await client.Api.CheckSignatureAsync();
-                return res.Status == "success";
+                return res.Status == "success"
+                    ? CheckIntegrationErrorCode.Success
+                    : CheckIntegrationErrorCode.Fail;
             }
             catch (Exception e)
             {
-                _log.Error(e);
-                return false;
+                _log.Warning(null, exception: e);
+                return CheckIntegrationErrorCode.Fail;
             }
         }
 
@@ -88,9 +97,15 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// </summary>
         /// <param name="request">Payment generation request</param>
         [HttpPost]
+        [ProducesResponseType(typeof(PaymentResponse), (int)HttpStatusCode.OK)]
         public async Task<PaymentResponse> GeneratePaymentAsync(GeneratePaymentRequest request)
         {
             var integrationProperties = await _partnerIntegrationPropertiesFetcherService.FetchPropertiesAsync(request.PartnerId);
+            if (integrationProperties.ErrorCode != IntegrationPropertiesErrorCode.None)
+                return new PaymentResponse
+                {
+                    ErrorCode = _mapper.Map<CheckIntegrationErrorCode>(integrationProperties.ErrorCode),
+                };
 
             var client = new PayrexxIntegrationClient(
                 integrationProperties.ApiBaseUrl,
@@ -119,8 +134,11 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
             }
             catch (Exception e)
             {
-                _log.Error(e);
-                throw;
+                _log.Warning(null, exception: e);
+                return new PaymentResponse
+                {
+                    ErrorCode = CheckIntegrationErrorCode.Fail,
+                };
             }
         }
 
@@ -129,9 +147,15 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// </summary>
         /// <param name="request">Check payment request</param>
         [HttpGet]
-        public async Task<PaymentStatus> CheckPaymentAsync(CheckPaymentRequest request)
+        [ProducesResponseType(typeof(PaymentStatusResponse), (int)HttpStatusCode.OK)]
+        public async Task<PaymentStatusResponse> CheckPaymentAsync(CheckPaymentRequest request)
         {
             var integrationProperties = await _partnerIntegrationPropertiesFetcherService.FetchPropertiesAsync(request.PartnerId);
+            if (integrationProperties.ErrorCode != IntegrationPropertiesErrorCode.None)
+                return new PaymentStatusResponse
+                {
+                    ErrorCode = _mapper.Map<CheckIntegrationErrorCode>(integrationProperties.ErrorCode),
+                };
 
             var client = new PayrexxIntegrationClient(
                 integrationProperties.ApiBaseUrl,
@@ -142,26 +166,37 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
             {
                 var paymentStatus = await client.Api.GetPaymentGatewayAsync(int.Parse(request.PaymentId));
 
+                var result = new PaymentStatusResponse { ErrorCode = CheckIntegrationErrorCode.Success };
                 if (paymentStatus.Status != "success")
-                    return PaymentStatus.NotFound;
+                {
+                    result.PaymentStatus = PaymentStatus.NotFound;
+                    return result;
+                }
 
                 switch(paymentStatus.Data[0].Status)
                 {
                     case "waiting":
-                        return PaymentStatus.Pending;
+                        result.PaymentStatus = PaymentStatus.Pending;
+                        break;
                     case "confirmed":
-                        return PaymentStatus.Success;
+                        result.PaymentStatus = PaymentStatus.Success;
+                        break;
                     case "authorized":
                     case "reserved":
-                        return PaymentStatus.Processing;
+                        result.PaymentStatus = PaymentStatus.Processing;
+                        break;
                     default:
                         throw new NotSupportedException($"Payment status {paymentStatus.Data[0].Status} is not supported");
                 }
+                return result;
             }
             catch (Exception e)
             {
-                _log.Error(e);
-                throw;
+                _log.Warning(null, exception: e);
+                return new PaymentStatusResponse
+                {
+                    ErrorCode = CheckIntegrationErrorCode.Fail,
+                };
             }
         }
     }

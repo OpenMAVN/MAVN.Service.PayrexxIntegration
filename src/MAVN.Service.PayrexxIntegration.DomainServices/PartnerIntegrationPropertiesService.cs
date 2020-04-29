@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MAVN.Service.CustomerProfile.Client;
+using MAVN.Service.CustomerProfile.Client.Models.Enums;
 using MAVN.Service.PayrexxIntegration.Domain;
+using MAVN.Service.PayrexxIntegration.Domain.Enums;
 using MAVN.Service.PayrexxIntegration.Domain.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -47,13 +49,22 @@ namespace MAVN.Service.PayrexxIntegration.DomainServices
             var partnerIntegrationProperties = await _customerProfileClient.PaymentProviderDetails.GetByPartnerIdAndPaymentProviderAsync(
                 partnerId, Constants.PayrexxProvider);
 
+            if (partnerIntegrationProperties.ErrorCode != PaymentProviderDetailsErrorCodes.None)
+                return new PayrexxIntegrationProperties { ErrorCode = IntegrationPropertiesErrorCode.PartnerConfigurationNotFound };
+
             var jobj = (JObject)JsonConvert.DeserializeObject(partnerIntegrationProperties.PaymentProviderDetails.PaymentIntegrationProperties);
+
+            var instance = jobj[Constants.InstanceJsonProperty]?.ToString();
+            if (string.IsNullOrWhiteSpace(instance))
+                return new PayrexxIntegrationProperties { ErrorCode = IntegrationPropertiesErrorCode.PartnerConfigurationPropertyIsMissing };
+            var apiKey = jobj[Constants.ApiKeyJsonProperty]?.ToString();
 
             return new PayrexxIntegrationProperties
             {
                 ApiBaseUrl = _apiBaseUrl,
-                InstanceName = jobj[Constants.InstanceJsonProperty].ToString(),
-                ApiKey = jobj[Constants.ApiKeyJsonProperty].ToString(),
+                InstanceName = instance,
+                ApiKey = apiKey,
+                ErrorCode = IntegrationPropertiesErrorCode.Success,
             };
         }
     }
