@@ -67,7 +67,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// <param name="request">Check payment integration request</param>
         [HttpPost("check")]
         [ProducesResponseType(typeof(CheckIntegrationErrorCode), (int)HttpStatusCode.OK)]
-        public async Task<CheckIntegrationErrorCode> CheckPaymentIntegrationAsync(CheckPaymentIntegrationRequest request)
+        public async Task<CheckIntegrationErrorCode> CheckPaymentIntegrationAsync([FromBody] CheckPaymentIntegrationRequest request)
         {
             var integrationProperties = await _partnerIntegrationPropertiesFetcherService.FetchPropertiesAsync(request.PartnerId);
             if (integrationProperties.ErrorCode != IntegrationPropertiesErrorCode.None)
@@ -98,7 +98,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         /// <param name="request">Payment generation request</param>
         [HttpPost]
         [ProducesResponseType(typeof(PaymentResponse), (int)HttpStatusCode.OK)]
-        public async Task<PaymentResponse> GeneratePaymentAsync(GeneratePaymentRequest request)
+        public async Task<PaymentResponse> GeneratePaymentAsync([FromBody] GeneratePaymentRequest request)
         {
             var integrationProperties = await _partnerIntegrationPropertiesFetcherService.FetchPropertiesAsync(request.PartnerId);
             if (integrationProperties.ErrorCode != IntegrationPropertiesErrorCode.None)
