@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="LykkeBiz.Sdk" Version="1.0.0" />
-    <PackageReference Include="MAVN.Service.PaymentIntegrationPlugin.Client" Version="1.9.0" />
+    <PackageReference Include="MAVN.Service.PaymentIntegrationPlugin.Client" Version="1.11.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0" />
   </ItemGroup>
   <ItemGroup>

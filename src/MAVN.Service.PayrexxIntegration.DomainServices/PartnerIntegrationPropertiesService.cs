@@ -64,7 +64,7 @@ namespace MAVN.Service.PayrexxIntegration.DomainServices
                 ApiBaseUrl = _apiBaseUrl,
                 InstanceName = instance,
                 ApiKey = apiKey,
-                ErrorCode = IntegrationPropertiesErrorCode.Success,
+                ErrorCode = IntegrationPropertiesErrorCode.None,
             };
         }
     }

@@ -82,7 +82,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
             {
                 var res = await client.Api.CheckSignatureAsync();
                 return res.Status == "success"
-                    ? CheckIntegrationErrorCode.Success
+                    ? CheckIntegrationErrorCode.None
                     : CheckIntegrationErrorCode.Fail;
             }
             catch (Exception e)
@@ -166,7 +166,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
             {
                 var paymentStatus = await client.Api.GetPaymentGatewayAsync(int.Parse(request.PaymentId));
 
-                var result = new PaymentStatusResponse { ErrorCode = CheckIntegrationErrorCode.Success };
+                var result = new PaymentStatusResponse { ErrorCode = CheckIntegrationErrorCode.None };
                 if (paymentStatus.Status != "success")
                 {
                     result.PaymentStatus = PaymentStatus.NotFound;
