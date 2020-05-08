@@ -15,6 +15,7 @@ using MAVN.Service.PayrexxIntegration.Domain;
 using System.Net;
 using MAVN.Service.PayrexxIntegration.Domain.Enums;
 using Common;
+using Lykke.Common.ApiLibrary.Exceptions;
 
 namespace MAVN.Service.PayrexxIntegration.Controllers
 {
@@ -125,9 +126,9 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
                     SkipResultPage = true
                 };
 
-                var res = await client.Api.CreatePaymentGatewayAsync(paymentGatewayRequest);
-
                 _log.Info("Call CreatePaymentGatewayAsync with data: " + paymentGatewayRequest.ToJson());
+
+                var res = await client.Api.CreatePaymentGatewayAsync(paymentGatewayRequest);
 
                 var payment = res.Data[0];
 
@@ -135,6 +136,14 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
                 {
                     PaymentId = payment.Id.ToString(),
                     PaymentPageUrl = payment.Link,
+                };
+            }
+            catch (ClientApiException e)
+            {
+                _log.Warning("ClientApiException with data: " + e.ToJson(), exception: e);
+                return new PaymentResponse
+                {
+                    ErrorCode = CheckIntegrationErrorCode.Fail,
                 };
             }
             catch (Exception e)
