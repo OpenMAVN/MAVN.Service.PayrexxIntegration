@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using MAVN.Service.PayrexxIntegration.Domain;
 using System.Net;
 using MAVN.Service.PayrexxIntegration.Domain.Enums;
+using Common;
 
 namespace MAVN.Service.PayrexxIntegration.Controllers
 {
@@ -114,8 +115,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
 
             try
             {
-                var res = await client.Api.CreatePaymentGatewayAsync(
-                new PaymentGatewayRequest
+                var paymentGatewayRequest = new PaymentGatewayRequest
                 {
                     Amount = request.Amount,
                     Currency = request.Currency,
@@ -123,7 +123,11 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
                     FailedRedirectUrl = request.FailRedirectUrl,
                     ReferenceId = request.PaymentRequestId,
                     SkipResultPage = true
-                });
+                };
+
+                var res = await client.Api.CreatePaymentGatewayAsync(paymentGatewayRequest);
+
+                _log.Info("Call CreatePaymentGatewayAsync with data: " + paymentGatewayRequest.ToJson());
 
                 var payment = res.Data[0];
 

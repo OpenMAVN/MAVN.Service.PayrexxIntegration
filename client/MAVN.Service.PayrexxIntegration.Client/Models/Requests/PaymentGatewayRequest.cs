@@ -41,8 +41,6 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
                 if (_failedRedirectUrl == null)
                 {
                     _failedRedirectUrl = _successRedirectUrl;
-                    if (_cancelRedirectUrl == null)
-                        _cancelRedirectUrl = _successRedirectUrl;
                 }
             }
         }
