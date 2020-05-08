@@ -122,6 +122,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
                     SuccessRedirectUrl = request.SuccessRedirectUrl,
                     FailedRedirectUrl = request.FailRedirectUrl,
                     ReferenceId = request.PaymentRequestId,
+                    SkipResultPage = true
                 });
 
                 var payment = res.Data[0];
