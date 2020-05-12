@@ -57,7 +57,7 @@ namespace MAVN.Service.PayrexxIntegration.Client
             request.RequestUri = uriBuilder.Uri;
 
             var result = await base.SendAsync(request, cancellationToken);
-            
+
             return result;
 
             string GetQueryString(JObject jObj)
@@ -66,12 +66,7 @@ namespace MAVN.Service.PayrexxIntegration.Client
                     jObj.Children()
                         .Cast<JProperty>()
                         .Where(jp => jp.Value != null)
-                        .Select(jp =>
-                        {
-                            var encodedValue = HttpUtility.UrlEncode(jp.Value.ToString()).Replace("+", "%20");
-
-                            return HttpUtility.UrlEncode(jp.Name) + "=" + encodedValue;
-                        }));
+                        .Select(jp => jp.Name + "=" + Uri.EscapeDataString(jp.Value.ToString())));
             }
         }
 

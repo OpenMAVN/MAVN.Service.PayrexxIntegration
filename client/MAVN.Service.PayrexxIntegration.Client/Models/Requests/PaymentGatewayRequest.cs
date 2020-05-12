@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
 using Newtonsoft.Json;
 
 namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
@@ -37,7 +36,7 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
             get { return _successRedirectUrl; }
             set
             {
-                _successRedirectUrl = HttpUtility.UrlEncode(value);
+                _successRedirectUrl = value;
                 if (_failedRedirectUrl == null)
                 {
                     _failedRedirectUrl = _successRedirectUrl;
@@ -51,7 +50,7 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
             get { return _failedRedirectUrl; }
             set
             {
-                _failedRedirectUrl = HttpUtility.UrlEncode(value);
+                _failedRedirectUrl = value;
                 if (_cancelRedirectUrl == null)
                     _cancelRedirectUrl = _failedRedirectUrl;
             }
@@ -63,7 +62,7 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
             get { return _cancelRedirectUrl; }
             set
             {
-                _cancelRedirectUrl = HttpUtility.UrlEncode(value);
+                _cancelRedirectUrl = value;
                 if (_failedRedirectUrl == null)
                     _failedRedirectUrl = _cancelRedirectUrl;
             }
