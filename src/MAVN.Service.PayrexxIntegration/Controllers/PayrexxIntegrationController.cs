@@ -123,7 +123,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
                     SuccessRedirectUrl = request.SuccessRedirectUrl,
                     FailedRedirectUrl = request.FailRedirectUrl,
                     ReferenceId = request.PaymentRequestId,
-                    SkipResultPage = true
+                    SkipResultPage = 0
                 };
 
                 _log.Info("Call CreatePaymentGatewayAsync with data: " + paymentGatewayRequest.ToJson());
@@ -140,7 +140,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
             }
             catch (ClientApiException e)
             {
-                _log.Warning("ClientApiException with data: " + e.ToJson(), exception: e);
+                _log.Warning("ClientApiException with data: " + new { HttpStatusCode = $"{(int)e.HttpStatusCode}: {e.HttpStatusCode}", e }.ToJson(), exception: e);
                 return new PaymentResponse
                 {
                     ErrorCode = CheckIntegrationErrorCode.Fail,

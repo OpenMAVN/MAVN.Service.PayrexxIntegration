@@ -37,7 +37,7 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
             get { return _successRedirectUrl; }
             set
             {
-                _successRedirectUrl = value;
+                _successRedirectUrl = HttpUtility.UrlEncode(value);
                 if (_failedRedirectUrl == null)
                 {
                     _failedRedirectUrl = _successRedirectUrl;
@@ -51,7 +51,7 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
             get { return _failedRedirectUrl; }
             set
             {
-                _failedRedirectUrl = value;
+                _failedRedirectUrl = HttpUtility.UrlEncode(value);
                 if (_cancelRedirectUrl == null)
                     _cancelRedirectUrl = _failedRedirectUrl;
             }
@@ -63,7 +63,7 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
             get { return _cancelRedirectUrl; }
             set
             {
-                _cancelRedirectUrl = value;
+                _cancelRedirectUrl = HttpUtility.UrlEncode(value);
                 if (_failedRedirectUrl == null)
                     _failedRedirectUrl = _cancelRedirectUrl;
             }
@@ -73,6 +73,6 @@ namespace MAVN.Service.PayrexxIntegration.Client.Models.Requests
         public List<int> PaymentProviders { get; set; }
 
         [JsonProperty("skipResultPage")]
-        public bool SkipResultPage { get; set; }
+        public int SkipResultPage { get; set; }
     }
 }

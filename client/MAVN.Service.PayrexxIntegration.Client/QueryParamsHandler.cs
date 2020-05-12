@@ -41,12 +41,15 @@ namespace MAVN.Service.PayrexxIntegration.Client
             {
                 var json = await request.Content.ReadAsStringAsync();
                 var jObj = (JObject)JsonConvert.DeserializeObject(json);
-                var queryStr = string.Join("&",
-                    jObj.Children()
-                        .Cast<JProperty>()
-                        .Select(jp => jp.Name + "=" + HttpUtility.UrlEncode(jp.Value.ToString().Replace(" ", "%20"))));
+                var queryStr = GetQueryString(jObj);
+
                 var signature = GenerateSignature(queryStr);
                 queryStr += $"&{SignatureQueryParamName}={signature}";
+
+#if DEBUG
+                Console.WriteLine(queryStr);
+#endif
+
                 request.Content = new StringContent(queryStr);
             }
             uriBuilder.Query = query.ToString();
@@ -54,9 +57,22 @@ namespace MAVN.Service.PayrexxIntegration.Client
             request.RequestUri = uriBuilder.Uri;
 
             var result = await base.SendAsync(request, cancellationToken);
+            
             return result;
 
-            //return base.SendAsync(request, cancellationToken);
+            string GetQueryString(JObject jObj)
+            {
+                return string.Join("&",
+                    jObj.Children()
+                        .Cast<JProperty>()
+                        .Where(jp => jp.Value != null)
+                        .Select(jp =>
+                        {
+                            var encodedValue = HttpUtility.UrlEncode(jp.Value.ToString()).Replace("+", "%20");
+
+                            return HttpUtility.UrlEncode(jp.Name) + "=" + encodedValue;
+                        }));
+            }
         }
 
         private string GenerateSignature(string queryString)
@@ -64,7 +80,14 @@ namespace MAVN.Service.PayrexxIntegration.Client
             byte[] messageBytes = new UTF8Encoding().GetBytes(queryString);
             byte[] hashmessage = new HMACSHA256(_apiKeyBytes).ComputeHash(messageBytes);
             var signature = Convert.ToBase64String(hashmessage);
-            return HttpUtility.UrlEncode(signature);
+            var encoded = HttpUtility.UrlEncode(signature);
+
+#if DEBUG
+            Console.WriteLine(signature);
+            Console.WriteLine(encoded);
+#endif
+
+            return encoded;
         }
     }
 }
