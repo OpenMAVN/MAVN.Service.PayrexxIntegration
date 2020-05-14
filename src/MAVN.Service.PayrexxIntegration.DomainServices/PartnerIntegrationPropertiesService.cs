@@ -52,11 +52,34 @@ namespace MAVN.Service.PayrexxIntegration.DomainServices
             if (partnerIntegrationProperties.ErrorCode != PaymentProviderDetailsErrorCodes.None)
                 return new PayrexxIntegrationProperties { ErrorCode = IntegrationPropertiesErrorCode.PartnerConfigurationNotFound };
 
-            var jobj = (JObject)JsonConvert.DeserializeObject(partnerIntegrationProperties.PaymentProviderDetails.PaymentIntegrationProperties);
+            return DeserializePayrexxIntegrationProperties(partnerIntegrationProperties.PaymentProviderDetails.PaymentIntegrationProperties);
+        }
+
+        public PayrexxIntegrationProperties DeserializePayrexxIntegrationProperties(string paymentIntegrationProperties)
+        {
+            JObject jobj;
+            try
+            {
+                jobj = (JObject)JsonConvert.DeserializeObject(paymentIntegrationProperties);
+            }
+            catch
+            {
+                return new PayrexxIntegrationProperties
+                {
+                    ErrorCode = IntegrationPropertiesErrorCode.Fail
+                };
+            }
 
             var instance = jobj[Constants.InstanceJsonProperty]?.ToString();
+
             if (string.IsNullOrWhiteSpace(instance))
-                return new PayrexxIntegrationProperties { ErrorCode = IntegrationPropertiesErrorCode.PartnerConfigurationPropertyIsMissing };
+            {
+                return new PayrexxIntegrationProperties
+                {
+                    ErrorCode = IntegrationPropertiesErrorCode.PartnerConfigurationPropertyIsMissing
+                };
+            }
+
             var apiKey = jobj[Constants.ApiKeyJsonProperty]?.ToString();
 
             return new PayrexxIntegrationProperties

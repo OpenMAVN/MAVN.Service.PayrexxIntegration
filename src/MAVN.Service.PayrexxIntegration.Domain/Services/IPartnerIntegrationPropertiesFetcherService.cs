@@ -9,5 +9,7 @@ namespace MAVN.Service.PayrexxIntegration.Domain.Services
         List<IntegrationProperty> GetIntegrationProperties();
 
         Task<PayrexxIntegrationProperties> FetchPropertiesAsync(Guid partnerId);
+
+        PayrexxIntegrationProperties DeserializePayrexxIntegrationProperties(string paymentIntegrationProperties);
     }
 }
