@@ -71,7 +71,11 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         [ProducesResponseType(typeof(CheckIntegrationErrorCode), (int)HttpStatusCode.OK)]
         public async Task<CheckIntegrationErrorCode> CheckPaymentIntegrationAsync([FromBody] CheckPaymentIntegrationRequest request)
         {
-            var integrationProperties = await _partnerIntegrationPropertiesFetcherService.FetchPropertiesAsync(request.PartnerId);
+            var integrationProperties = string.IsNullOrEmpty(request.PaymentIntegrationProperties)
+                ? await _partnerIntegrationPropertiesFetcherService.FetchPropertiesAsync(request.PartnerId)
+                :  _partnerIntegrationPropertiesFetcherService.DeserializePayrexxIntegrationProperties(
+                    request.PaymentIntegrationProperties);
+
             if (integrationProperties.ErrorCode != IntegrationPropertiesErrorCode.None)
                 return _mapper.Map<CheckIntegrationErrorCode>(integrationProperties.ErrorCode);
 
