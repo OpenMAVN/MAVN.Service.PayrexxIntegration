@@ -71,16 +71,15 @@ namespace MAVN.Service.PayrexxIntegration.DomainServices
             }
 
             var instance = jobj[Constants.InstanceJsonProperty]?.ToString();
+            var apiKey = jobj[Constants.ApiKeyJsonProperty]?.ToString();
 
-            if (string.IsNullOrWhiteSpace(instance))
+            if (string.IsNullOrWhiteSpace(instance) || string.IsNullOrWhiteSpace(apiKey))
             {
                 return new PayrexxIntegrationProperties
                 {
                     ErrorCode = IntegrationPropertiesErrorCode.PartnerConfigurationPropertyIsMissing
                 };
             }
-
-            var apiKey = jobj[Constants.ApiKeyJsonProperty]?.ToString();
 
             return new PayrexxIntegrationProperties
             {
