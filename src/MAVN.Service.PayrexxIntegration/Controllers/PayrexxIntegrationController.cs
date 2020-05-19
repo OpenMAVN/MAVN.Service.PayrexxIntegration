@@ -60,7 +60,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
         [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
         public Task<List<string>> GetPaymentIntegrationSupportedCurrenciesAsync()
         {
-            return Task.FromResult(new List<string> { "CHF" });
+            return _partnerIntegrationPropertiesFetcherService.GetIntegrationCurrency();
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
                     return result;
                 }
 
-                switch(paymentStatus.Data[0].Status)
+                switch (paymentStatus.Data[0].Status)
                 {
                     case "waiting":
                         result.PaymentStatus = PaymentStatus.Pending;
