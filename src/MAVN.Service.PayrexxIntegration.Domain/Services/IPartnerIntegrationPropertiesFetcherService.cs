@@ -11,5 +11,7 @@ namespace MAVN.Service.PayrexxIntegration.Domain.Services
         Task<PayrexxIntegrationProperties> FetchPropertiesAsync(Guid partnerId);
 
         PayrexxIntegrationProperties DeserializePayrexxIntegrationProperties(string paymentIntegrationProperties);
+
+        Task<List<string>> GetIntegrationCurrency();
     }
 }
