@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MAVN.Service.CustomerProfile.Client;
 using MAVN.Service.CustomerProfile.Client.Models.Enums;
@@ -88,6 +89,11 @@ namespace MAVN.Service.PayrexxIntegration.DomainServices
                 ApiKey = apiKey,
                 ErrorCode = IntegrationPropertiesErrorCode.None,
             };
+        }
+
+        public async Task<List<string>> GetIntegrationCurrency()
+        {
+            return await Task.FromResult(Enum.GetNames(typeof(IntegrationSupportedCurrency)).ToList());
         }
     }
 }
