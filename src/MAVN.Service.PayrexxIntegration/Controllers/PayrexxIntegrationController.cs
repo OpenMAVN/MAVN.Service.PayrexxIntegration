@@ -206,6 +206,8 @@ namespace MAVN.Service.PayrexxIntegration.Controllers
                     default:
                         throw new NotSupportedException($"Payment status {paymentStatus.Data[0].Status} is not supported");
                 }
+
+                result.PaymentUrl = paymentStatus.Data[0].Link;
                 return result;
             }
             catch (Exception e)
