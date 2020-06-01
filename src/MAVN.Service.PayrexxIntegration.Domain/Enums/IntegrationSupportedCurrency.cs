@@ -10,6 +10,6 @@ namespace MAVN.Service.PayrexxIntegration.Domain.Enums
         EUR,
         GBP, 
         USD,
-        RUR
+        RUB
     }
 }
